@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">AlarmClock</string>
+    <string name="golf">Golf</string>
+    <string name="add">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="name">Name</string>
+    <string name="time">clock_time_set_up</string>
+    <string name="set_up_name">set_up_name</string>
+
+
+</resources>
