@@ -3,6 +3,7 @@ package com.example.therdsak.alarmclock;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,13 +12,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import java.util.List;
 
 /**
  * Created by Therdsak on 8/24/2016.
  */
 public class AlarmListFragment extends Fragment {
+    private static final int REQUEST_TIME = 1234;
+    private static final String DIALOG_TIME = "AlarmListFragment";
     RecyclerView mRecyclerView;
-
+    Adapter adapter;
 
 
     @Override
@@ -39,7 +45,11 @@ public class AlarmListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.mnu_add_item:
-                AlarmEditFragment.newInstance(getActivity()).addTime();
+                FragmentManager fragmentManager = getFragmentManager();
+                TimeDialog timeDialog = TimeDialog.newInstance(Alarm.getAlarmDate());
+                timeDialog.setTargetFragment(AlarmListFragment.this, REQUEST_TIME);
+                timeDialog.show(fragmentManager, DIALOG_TIME);
+
 
 
 
@@ -60,14 +70,14 @@ public class AlarmListFragment extends Fragment {
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-
+        mRecyclerView.setAdapter(adapter);
         return v;
     }
 
 
 
     private class Adapter extends RecyclerView.Adapter<Holder> {
-
+            private List<Alarm> _alarms;
         @Override
         public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_alarm_clock , parent, false);
@@ -76,19 +86,37 @@ public class AlarmListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(Holder holder, int position) {
-
+            Alarm alarm = _alarms.get(position);
+            holder.bind(alarm,position);
         }
 
         @Override
         public int getItemCount() {
-            return 0;
+
+            return _alarms.size();
         }
     }
 
 
     private class Holder extends RecyclerView.ViewHolder {
+        public TextView timeTextView;
+        Alarm _alarm;
+        int _position;
+
         public Holder(View itemView) {
             super(itemView);
+
+            timeTextView = (TextView) itemView.findViewById(R.id.list_time);
+
+
+
+        }
+
+
+        public void bind(Alarm alarm, int position) {
+            _alarm = alarm;
+            _position = position;
+            timeTextView.setText(_alarm.getAlarmDate().toString());
         }
     }
 

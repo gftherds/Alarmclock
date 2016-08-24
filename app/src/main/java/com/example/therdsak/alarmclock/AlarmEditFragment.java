@@ -24,7 +24,8 @@ public class AlarmEditFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.dialog_time,container,false);
-            return v;
+
+        return v;
 
     }
 
