@@ -1,6 +1,8 @@
 package com.example.therdsak.alarmclock;
 
+import android.content.Context;
 import android.content.Intent;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -44,7 +46,14 @@ public class AlarmListFragment extends Fragment {
         return alarmListfragment;
     }
 
+    public static Intent newIntent(Context activity, UUID id) {
+        Intent intent = new Intent(activity, AlarmListFragment.class);
+        intent.putExtra(ALARM_ID , id);
 
+
+        return intent;
+
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -117,13 +126,20 @@ public class AlarmListFragment extends Fragment {
 
     private class Adapter extends RecyclerView.Adapter<Holder> {
             private List<Alarm> _alarms;
-        private List<Alarm> alarms;
+            private int viewCreatingCount;
+//
+//        @Override
+//        public long getItemId(int position) {
+//            return super.getItemId(position);
+//        }
+//        //  private List<Alarm> alarms;
 
         public Adapter(List<Alarm> alarms){
                 _alarms = alarms;
             }
         @Override
         public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
+            viewCreatingCount++;
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_alarm_clock , parent, false);
             return new Holder(v);
         }
@@ -140,14 +156,16 @@ public class AlarmListFragment extends Fragment {
             return _alarms.size();
         }
 
-        public void setAlarms(List<Alarm> alarms) {
-            this.alarms = alarms;
-        }
+     //   public void setAlarms(List<Alarm> alarms) {
+      //      this.alarms = alarms;
+     //   }
     }
 
 
-    private class Holder extends RecyclerView.ViewHolder {
+    private class Holder extends RecyclerView.ViewHolder implements View.OnClickListener,View.OnLongClickListener{
         public TextView timeTextView;
+        public TextView nameTextView;
+
         Alarm _alarm;
         int _position;
 
@@ -155,7 +173,9 @@ public class AlarmListFragment extends Fragment {
             super(itemView);
 
             timeTextView = (TextView) itemView.findViewById(R.id.list_time);
-
+            nameTextView = (TextView) itemView.findViewById(R.id.list_name);
+            itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
 
 
         }
@@ -165,6 +185,19 @@ public class AlarmListFragment extends Fragment {
             _alarm = alarm;
             _position = position;
             timeTextView.setText(_alarm.getAlarmDate().toString());
+            nameTextView.setText(_alarm.getTitle());
+        }
+
+
+        @Override
+        public void onClick(View view) {
+
+        }
+
+
+        @Override
+        public boolean onLongClick(View view) {
+            return false;
         }
     }
 
@@ -179,7 +212,7 @@ public class AlarmListFragment extends Fragment {
             mRecyclerView.setAdapter(_adapter);
 
         } else {
-            _adapter.setAlarms(alarmLab.getAlarm());
+     //       _adapter.setAlarms(alarmLab.getAlarm());
             _adapter.notifyDataSetChanged();
         }
 

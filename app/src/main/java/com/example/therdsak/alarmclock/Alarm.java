@@ -8,7 +8,13 @@ import java.util.UUID;
  */
 public class Alarm {
     private Date alarmDate;
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     private UUID id;
+    private String title;
 
     public Alarm(){
         this(UUID.randomUUID());
@@ -37,5 +43,9 @@ public class Alarm {
 
     public Date getAlarmDate() {
         return alarmDate;
+    }
+
+    public String getTitle() {
+        return title;
     }
 }

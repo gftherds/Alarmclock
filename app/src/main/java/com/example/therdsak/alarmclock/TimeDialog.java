@@ -25,10 +25,9 @@ public class TimeDialog extends DialogFragment implements DialogInterface.OnClic
         private static final String TAG ="TimeDialog1";
 
 
-    private static final String EXTRA_TIME = "TimeDialog";
-    public int timeHour;
-    public int timeMinute;
-//    private Handler handler;
+    public static final String EXTRA_TIME = "TimeDialog";
+
+
 
     TimePicker timePicker;
     Date date;
@@ -62,8 +61,8 @@ public class TimeDialog extends DialogFragment implements DialogInterface.OnClic
         int minute = calendar.get(Calendar.MINUTE);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        View v = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_time, null);
-        timePicker = (TimePicker) v.findViewById(R.id.time_picker_dialog);
+        View v = LayoutInflater.from(getActivity()).inflate(R.layout.dialog, null);
+        timePicker = (TimePicker) v.findViewById(R.id.time_picker_dialog_1);
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             timePicker.setHour(hour);
