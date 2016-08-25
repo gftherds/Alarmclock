@@ -6,6 +6,7 @@
     <string name="name">Name</string>
     <string name="time">clock_time_set_up</string>
     <string name="set_up_name">set_up_name</string>
+    <string name="add_time">ADD TIME</string>
 
 
 </resources>

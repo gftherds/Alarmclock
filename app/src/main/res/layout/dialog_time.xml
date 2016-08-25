@@ -47,6 +47,7 @@
         android:layout_alignParentEnd="true" />
 
     <TimePicker
+        android:id="@+id/time_picker_dialog"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
@@ -55,7 +56,13 @@
 
     </TimePicker>
 
-
+   <Button
+       android:text="@string/add_time"
+       android:id="@+id/button_add"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_below="@+id/time_picker_dialog"
+       android:layout_centerHorizontal="true" />
 </RelativeLayout>
 
 

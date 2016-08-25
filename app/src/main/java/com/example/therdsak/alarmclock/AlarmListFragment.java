@@ -1,11 +1,14 @@
 package com.example.therdsak.alarmclock;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,21 +18,47 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Therdsak on 8/24/2016.
  */
 public class AlarmListFragment extends Fragment {
-    private static final int REQUEST_TIME = 1234;
-    private static final String DIALOG_TIME = "AlarmListFragment";
+
+    private static final String ALARM_ID = "AlarmListFragment.ID";
     RecyclerView mRecyclerView;
-    Adapter adapter;
+
+
+    private Alarm alarm;
+
+
+    private static final String TAG = "AlarmListFragment";
+    private Adapter _adapter;
+
+    public static  AlarmListFragment newInstance(UUID alarmId){
+        Bundle args = new Bundle();
+        args.putSerializable(ALARM_ID, alarmId);
+
+        AlarmListFragment alarmListfragment  = new AlarmListFragment();
+        alarmListfragment.setArguments(args);
+        return alarmListfragment;
+    }
+
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setHasOptionsMenu(true);
+
+
+
+        AlarmLab alarmLab = AlarmLab.getInstance(getActivity());
+        UUID alarmId = (UUID) getArguments().getSerializable(ALARM_ID);
+        alarm = AlarmLab.getInstance(getActivity()).getAlarmById(alarmId);
+        Log.i(TAG, "onCreate:  " + alarm);
+
 
 
     }
@@ -45,13 +74,23 @@ public class AlarmListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.mnu_add_item:
-                FragmentManager fragmentManager = getFragmentManager();
-                TimeDialog timeDialog = TimeDialog.newInstance(Alarm.getAlarmDate());
-                timeDialog.setTargetFragment(AlarmListFragment.this, REQUEST_TIME);
-                timeDialog.show(fragmentManager, DIALOG_TIME);
+                if(alarm == null){
+                    alarm = new Alarm();
+                }
+
+              if(getActivity().findViewById(R.id.fragment_container) == null) {
+                Intent intent = AlarmEditFragment.newIntent(getActivity(), alarm.getId());
+
+                startActivity(intent);
+            }else{
+                  Fragment newDetailFragment = AlarmEditFragment.newInstance(getActivity(),alarm.getId());
+                  getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,newDetailFragment).commit();
 
 
+        }
 
+
+                UpdateUI();
 
                 return true;
         }
@@ -70,7 +109,7 @@ public class AlarmListFragment extends Fragment {
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mRecyclerView.setAdapter(adapter);
+//        mRecyclerView.setAdapter(new AlarmMainActivity());
         return v;
     }
 
@@ -78,6 +117,11 @@ public class AlarmListFragment extends Fragment {
 
     private class Adapter extends RecyclerView.Adapter<Holder> {
             private List<Alarm> _alarms;
+        private List<Alarm> alarms;
+
+        public Adapter(List<Alarm> alarms){
+                _alarms = alarms;
+            }
         @Override
         public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_alarm_clock , parent, false);
@@ -94,6 +138,10 @@ public class AlarmListFragment extends Fragment {
         public int getItemCount() {
 
             return _alarms.size();
+        }
+
+        public void setAlarms(List<Alarm> alarms) {
+            this.alarms = alarms;
         }
     }
 
@@ -118,6 +166,23 @@ public class AlarmListFragment extends Fragment {
             _position = position;
             timeTextView.setText(_alarm.getAlarmDate().toString());
         }
+    }
+
+
+    public void UpdateUI() {
+        AlarmLab alarmLab = AlarmLab.getInstance(getActivity());
+        List<Alarm> alarms = alarmLab.getAlarm();
+
+
+        if (_adapter == null) {
+            _adapter = new Adapter(alarms);
+            mRecyclerView.setAdapter(_adapter);
+
+        } else {
+            _adapter.setAlarms(alarmLab.getAlarm());
+            _adapter.notifyDataSetChanged();
+        }
+
     }
 
 
