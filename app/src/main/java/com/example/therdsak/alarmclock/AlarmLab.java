@@ -13,9 +13,9 @@ import java.util.UUID;
 public class AlarmLab {
     private static AlarmLab instance;
     List<Alarm> mAlarmList;
-    private List<Alarm> alarm;
 
-    public AlarmLab() {
+
+    public AlarmLab(Context context) {
         mAlarmList = new ArrayList<>();
         int size = mAlarmList.size();
         for (int i = 0; i < size; i++) {
@@ -25,7 +25,7 @@ public class AlarmLab {
 
     public static AlarmLab getInstance(Context context) {
         if (instance == null) {
-            instance = new AlarmLab();
+            instance = new AlarmLab(context);
         }
         return instance;
     }
@@ -45,6 +45,10 @@ public class AlarmLab {
     public List<Alarm> getAlarm() {
         List<Alarm> alarms = new ArrayList<>();
         return alarms;
+    }
+
+    public void addAlarm(Alarm alarm) {
+        mAlarmList.add(alarm);
     }
 }
 

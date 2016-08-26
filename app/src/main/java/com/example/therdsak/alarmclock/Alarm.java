@@ -8,6 +8,7 @@ import java.util.UUID;
  */
 public class Alarm {
     private Date alarmDate;
+    private boolean slove;
 
     public void setTitle(String title) {
         this.title = title;
@@ -16,7 +17,7 @@ public class Alarm {
     private UUID id;
     private String title;
 
-    public Alarm(){
+    public Alarm() {
         this(UUID.randomUUID());
     }
 
@@ -40,12 +41,18 @@ public class Alarm {
     }
 
 
-
     public Date getAlarmDate() {
         return alarmDate;
     }
 
     public String getTitle() {
         return title;
+    }
+
+    public boolean isSolve() {
+        return slove;
+    }
+    public void setSolve(boolean solve){
+        this.isSolve();
     }
 }

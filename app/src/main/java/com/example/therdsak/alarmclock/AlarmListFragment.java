@@ -1,22 +1,18 @@
 package com.example.therdsak.alarmclock;
 
-import android.content.Context;
-import android.content.Intent;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.List;
@@ -28,31 +24,25 @@ import java.util.UUID;
 public class AlarmListFragment extends Fragment {
 
     private static final String ALARM_ID = "AlarmListFragment.ID";
+    private static final int REQUEST_TIME = 200;
+    private static final String DIALOG_TIME = "AlarmListFragment";
     RecyclerView mRecyclerView;
 
 
     private Alarm alarm;
 
 
-    private static final String TAG = "AlarmListFragment";
+
     private Adapter _adapter;
 
-    public static  AlarmListFragment newInstance(UUID alarmId){
+
+
+    public static AlarmListFragment newInstance(UUID alarmID) {
         Bundle args = new Bundle();
-        args.putSerializable(ALARM_ID, alarmId);
-
-        AlarmListFragment alarmListfragment  = new AlarmListFragment();
-        alarmListfragment.setArguments(args);
-        return alarmListfragment;
-    }
-
-    public static Intent newIntent(Context activity, UUID id) {
-        Intent intent = new Intent(activity, AlarmListFragment.class);
-        intent.putExtra(ALARM_ID , id);
-
-
-        return intent;
-
+        args.putSerializable(ALARM_ID, alarmID);
+        AlarmListFragment crimeFragment = new AlarmListFragment();
+        crimeFragment.setArguments(args);
+        return crimeFragment;
     }
 
     @Override
@@ -63,17 +53,13 @@ public class AlarmListFragment extends Fragment {
 
 
 
-        AlarmLab alarmLab = AlarmLab.getInstance(getActivity());
-        UUID alarmId = (UUID) getArguments().getSerializable(ALARM_ID);
-        alarm = AlarmLab.getInstance(getActivity()).getAlarmById(alarmId);
-        Log.i(TAG, "onCreate:  " + alarm);
-
 
 
     }
+
     @Override
-    public void onCreateOptionsMenu(Menu menu , MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu , inflater);
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_add_list, menu);
 
 
@@ -83,21 +69,13 @@ public class AlarmListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.mnu_add_item:
-                if(alarm == null){
+                FragmentManager fragmentManager = getFragmentManager();
+                if (alarm == null){
                     alarm = new Alarm();
                 }
-
-              if(getActivity().findViewById(R.id.fragment_container) == null) {
-                Intent intent = AlarmEditFragment.newIntent(getActivity(), alarm.getId());
-
-                startActivity(intent);
-            }else{
-                  Fragment newDetailFragment = AlarmEditFragment.newInstance(getActivity(),alarm.getId());
-                  getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,newDetailFragment).commit();
-
-
-        }
-
+                TimeDialog timeDialog = TimeDialog.newInstance(alarm.getAlarmDate());
+                timeDialog.setTargetFragment(AlarmListFragment.this,REQUEST_TIME);
+                timeDialog.show(fragmentManager, DIALOG_TIME);
 
                 UpdateUI();
 
@@ -108,46 +86,39 @@ public class AlarmListFragment extends Fragment {
     }
 
 
-
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.activity_alarm_main, container,false);
+        View v = inflater.inflate(R.layout.activity_alarm_main, container, false);
 
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-//        mRecyclerView.setAdapter(new AlarmMainActivity());
+
         return v;
     }
 
 
-
     private class Adapter extends RecyclerView.Adapter<Holder> {
-            private List<Alarm> _alarms;
-            private int viewCreatingCount;
-//
-//        @Override
-//        public long getItemId(int position) {
-//            return super.getItemId(position);
-//        }
-//        //  private List<Alarm> alarms;
+        private List<Alarm> _alarms;
+        private int viewCreatingCount;
 
-        public Adapter(List<Alarm> alarms){
-                _alarms = alarms;
-            }
+
+        public Adapter(List<Alarm> alarms) {
+            _alarms = alarms;
+        }
+
         @Override
         public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
             viewCreatingCount++;
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_alarm_clock , parent, false);
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_alarm_clock, parent, false);
             return new Holder(v);
         }
 
         @Override
         public void onBindViewHolder(Holder holder, int position) {
             Alarm alarm = _alarms.get(position);
-            holder.bind(alarm,position);
+            holder.bind(alarm, position);
         }
 
         @Override
@@ -156,15 +127,14 @@ public class AlarmListFragment extends Fragment {
             return _alarms.size();
         }
 
-     //   public void setAlarms(List<Alarm> alarms) {
-      //      this.alarms = alarms;
-     //   }
+
     }
 
 
-    private class Holder extends RecyclerView.ViewHolder implements View.OnClickListener,View.OnLongClickListener{
+    private class Holder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public TextView timeTextView;
         public TextView nameTextView;
+        public Switch aSwitch;
 
         Alarm _alarm;
         int _position;
@@ -174,10 +144,9 @@ public class AlarmListFragment extends Fragment {
 
             timeTextView = (TextView) itemView.findViewById(R.id.list_time);
             nameTextView = (TextView) itemView.findViewById(R.id.list_name);
+            aSwitch = (Switch) itemView.findViewById(R.id.switch_name);
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
-
-
         }
 
 
@@ -186,6 +155,8 @@ public class AlarmListFragment extends Fragment {
             _position = position;
             timeTextView.setText(_alarm.getAlarmDate().toString());
             nameTextView.setText(_alarm.getTitle());
+            aSwitch.setChecked(_alarm.isSolve());
+            aSwitch.setOnClickListener(this);
         }
 
 
@@ -211,12 +182,11 @@ public class AlarmListFragment extends Fragment {
             _adapter = new Adapter(alarms);
             mRecyclerView.setAdapter(_adapter);
 
-        } else {
-     //       _adapter.setAlarms(alarmLab.getAlarm());
+        }
             _adapter.notifyDataSetChanged();
         }
 
     }
 
 
-}
+

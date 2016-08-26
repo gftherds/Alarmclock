@@ -13,6 +13,9 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
@@ -28,8 +31,9 @@ public class TimeDialog extends DialogFragment implements DialogInterface.OnClic
     public static final String EXTRA_TIME = "TimeDialog";
 
 
-
+    EditText textView;
     TimePicker timePicker;
+    Switch aSwitch;
     Date date;
 
 
@@ -63,6 +67,8 @@ public class TimeDialog extends DialogFragment implements DialogInterface.OnClic
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.dialog, null);
         timePicker = (TimePicker) v.findViewById(R.id.time_picker_dialog_1);
+        textView = (EditText) v.findViewById(R.id.editText);
+        aSwitch = (Switch) v.findViewById(R.id.switch_dialog);
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             timePicker.setHour(hour);
@@ -70,31 +76,13 @@ public class TimeDialog extends DialogFragment implements DialogInterface.OnClic
         }
         builder.setView(v);
         builder.setPositiveButton(android.R.string.ok, this);
+        builder.setNegativeButton(android.R.string.cancel, this);
         return builder.show();
 
 
 
 
-//        Bundle bundle = getArguments();
-//        timeHour = bundle.getInt(MyConstants.HOUR);
-//        timeMinute = bundle.getInt(MyConstants.MINUTE);
-//        TimePickerDialog.OnTimeSetListener listener = new TimePickerDialog.OnTimeSetListener(){
 
-//            @Override
-//            public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
-//                timeHour = hourOfDay;
-//                timeMinute = minute;
-//                Bundle b = new Bundle();
-//                b.putInt(MyConstants.HOUR ,timeHour);
-//                b.putInt(MyConstants.MINUTE , timeMinute);
-//                Message msg = new Message();
-//                msg.setData(b);
-//              handler.sendMessage(msg);
-//            }
-//        };
-//
-//            return new TimePickerDialog(getActivity(), listener, timeHour, timeMinute, false);
-//    }
     }
 
 
@@ -115,12 +103,6 @@ public class TimeDialog extends DialogFragment implements DialogInterface.OnClic
         calendar.set(Calendar.MINUTE,minute);
         sendResult(Activity.RESULT_OK,calendar.getTime());
 
-
-
-
-
-
-//        getTargetFragment().onActivityResult(getTargetRequestCode(),resultCode ,intent);
     }
 
     private void sendResult(int resultCode, Date date) {
