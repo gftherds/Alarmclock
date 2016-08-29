@@ -1,7 +1,14 @@
 package com.example.therdsak.alarmclock;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+
+import com.example.therdsak.alarmclock.Database.AlarmBaseHelper;
+import com.example.therdsak.alarmclock.Database.AlarmCursorWrapper;
+import com.example.therdsak.alarmclock.Database.AlarmDBSchema;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,15 +23,22 @@ public class AlarmLab {
     private static final String TAG = "AlarmLab";
     private static AlarmLab instance;
     List<Alarm> mAlarmList;
-
-
+    SQLiteDatabase database;
     public AlarmLab(Context context) {
-        mAlarmList = new ArrayList<>();
-        int size = mAlarmList.size();
-        for (int i = 0; i < size; i++) {
-            mAlarmList.get(i);
-        }
+        context = context.getApplicationContext();
+        AlarmBaseHelper alarmBaseHelper = new AlarmBaseHelper(context);
+        database = alarmBaseHelper.getWritableDatabase();
     }
+
+    private static ContentValues getContentValues(Alarm alarm){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(AlarmDBSchema.AlarmTable.Cols.UUID , alarm.getId().toString());
+        contentValues.put(AlarmDBSchema.AlarmTable.Cols.NAME , alarm.getTitle());
+        contentValues.put(AlarmDBSchema.AlarmTable.Cols.TIME , alarm.getAlarmDate().getTime());
+        contentValues.put(AlarmDBSchema.AlarmTable.Cols.ISSolve , (alarm.isSolve()) ? 1 : 0 );
+        return contentValues;
+    }
+
 
     public static AlarmLab getInstance(Context context) {
         if (instance == null) {
@@ -34,12 +48,16 @@ public class AlarmLab {
     }
 
     public Alarm getAlarmById(UUID uuid) {
-        for (Alarm alarm : mAlarmList) {
-            if (alarm.getId().equals(uuid)) {
-                return alarm;
+        AlarmCursorWrapper cursor = queryAlarms(AlarmDBSchema.AlarmTable.Cols.UUID + " = ? " , new String[] { uuid.toString() });
+        try {
+            if(cursor.getCount() == 0 ){
+                return null;
             }
+            cursor.moveToFirst();
+            return cursor.getAlarm();
+        }finally {
+            cursor.close();
         }
-        return null;
     }
 
 
@@ -47,35 +65,47 @@ public class AlarmLab {
 
     public List<Alarm> getAlarm() {
 
-        if (mAlarmList==null) {
+        List<Alarm> alarms = new ArrayList<>();
 
-            mAlarmList = new ArrayList<>();
+        AlarmCursorWrapper cursor = queryAlarms(null, null);
+
+        try {
+            cursor.moveToFirst();
+            while ( !cursor.isAfterLast() ){
+                alarms.add(cursor.getAlarm());
+                cursor.moveToNext();
+
+            }
+        } finally {
+            cursor.close();
         }
-        return mAlarmList;
 
+        return alarms;
+    }
+
+    private AlarmCursorWrapper queryAlarms(String whereCause,String[] whereArgs) {
+        Cursor cursor = database.query(AlarmDBSchema.AlarmTable.NAMEDB,
+                null,
+                whereCause,
+                whereArgs,
+                null,
+                null,
+                null);
+
+        return new AlarmCursorWrapper(cursor);
     }
 
     public void addAlarm(Alarm alarm) {
-        mAlarmList.add(alarm);
+        ContentValues contentValues = getContentValues(alarm);
+        database.insert(AlarmDBSchema.AlarmTable.NAMEDB,null,contentValues);
     }
 
 
     public void deleteAlarm(UUID uuid){
-        int i= 0;
-        Log.i(TAG, "deleteAlarm11111: " + uuid);
-        for (Alarm alarm : mAlarmList){
-            Log.i(TAG, "deleteAlarm: "+ alarm.getId());
-            if(alarm.getId().equals(uuid)){
-                mAlarmList.remove(i);
-                Log.i(TAG, "deleteAlarm: " + mAlarmList);
-            }
-            i++;
+        database.delete(AlarmDBSchema.AlarmTable.NAMEDB, AlarmDBSchema.AlarmTable.Cols.UUID + " = ?", new String[]{ uuid.toString() });
         }
     }
 
-    public void updateAlarm(Alarm alarm){
-        String uuidStr = alarm.getId().toString();
-    }
 
-}
+
 
