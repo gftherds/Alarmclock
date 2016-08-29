@@ -41,14 +41,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/status"
-        android:layout_alignBottom="@+id/switch_dialog"
-        android:layout_toLeftOf="@+id/switch_dialog"
-        android:layout_toStartOf="@+id/switch_dialog" />
+        android:layout_alignBottom="@+id/switch_dialog_on_off"
+        android:layout_toLeftOf="@+id/switch_dialog_on_off"
+        android:layout_toStartOf="@+id/switch_dialog_on_off" />
 
     <Switch
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/switch_dialog"
+        android:id="@+id/switch_dialog_on_off"
         android:layout_below="@+id/editText"
         android:layout_toRightOf="@+id/image_dialog"
         android:layout_toEndOf="@+id/image_dialog"

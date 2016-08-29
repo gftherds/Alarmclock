@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,6 +12,8 @@ import java.util.UUID;
  * Created by Therdsak on 8/25/2016.
  */
 public class AlarmLab {
+
+    private static final String TAG = "AlarmLab";
     private static AlarmLab instance;
     List<Alarm> mAlarmList;
 
@@ -43,12 +46,36 @@ public class AlarmLab {
 
 
     public List<Alarm> getAlarm() {
-        List<Alarm> alarms = new ArrayList<>();
-        return alarms;
+
+        if (mAlarmList==null) {
+
+            mAlarmList = new ArrayList<>();
+        }
+        return mAlarmList;
+
     }
 
     public void addAlarm(Alarm alarm) {
         mAlarmList.add(alarm);
     }
+
+
+    public void deleteAlarm(UUID uuid){
+        int i= 0;
+        Log.i(TAG, "deleteAlarm11111: " + uuid);
+        for (Alarm alarm : mAlarmList){
+            Log.i(TAG, "deleteAlarm: "+ alarm.getId());
+            if(alarm.getId().equals(uuid)){
+                mAlarmList.remove(i);
+                Log.i(TAG, "deleteAlarm: " + mAlarmList);
+            }
+            i++;
+        }
+    }
+
+    public void updateAlarm(Alarm alarm){
+        String uuidStr = alarm.getId().toString();
+    }
+
 }
 

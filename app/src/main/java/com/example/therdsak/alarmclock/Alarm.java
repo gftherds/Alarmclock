@@ -8,7 +8,7 @@ import java.util.UUID;
  */
 public class Alarm {
     private Date alarmDate;
-    private boolean slove;
+    private boolean solve;
 
     public void setTitle(String title) {
         this.title = title;
@@ -50,9 +50,10 @@ public class Alarm {
     }
 
     public boolean isSolve() {
-        return slove;
+
+        return solve;
     }
     public void setSolve(boolean solve){
-        this.isSolve();
+        this.solve = solve;
     }
 }
