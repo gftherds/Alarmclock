@@ -115,6 +115,8 @@ public class TimeDialog extends DialogFragment implements DialogInterface.OnClic
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             hour = timePicker.getHour();
             minute = timePicker.getMinute();
+            Log.i(TAG, "hour: "+hour);
+            Log.i(TAG, "minute: "+minute);
         }
         calendar.set(Calendar.HOUR, hour);
         calendar.set(Calendar.MINUTE, minute);
