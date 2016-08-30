@@ -19,10 +19,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -35,7 +33,7 @@ public class AlarmListFragment extends Fragment {
     private static final String ALARM_ID = "AlarmListFragment.ID";
     private static final int REQUEST_TIME = 200;
     private static final String DIALOG_TIME = "AlarmListFragment";
-    private static final int REQUEST_UPDATE_ALARM = 200;
+    ;
 
     RecyclerView mRecyclerView;
     private static final String TAG = "AlarmListFragment";
@@ -189,9 +187,9 @@ public class AlarmListFragment extends Fragment {
 
         @Override
         public void onClick(View view) {
-         TimeDialog timeDialog = TimeDialog.newInstance(alarm.getId());
-            Log.d("on click " , alarm.getId().toString());
-            timeDialog.show(getActivity().getSupportFragmentManager(),"Edit Time");
+            TimeDialog timeDialog = TimeDialog.newInstance(alarm.getId());
+            timeDialog.setTargetFragment(AlarmListFragment.this, REQUEST_TIME);
+            timeDialog.show(getActivity().getSupportFragmentManager(), "Edit Time");
 
         }
 
@@ -208,7 +206,7 @@ public class AlarmListFragment extends Fragment {
                     AlarmLab.getInstance(getActivity()).deleteAlarm(_alarm.getId());
 //                    getActivity().finish();
                     UpdateUI();
-                Log.i(TAG, "onLongClick: " + alarm.getId());
+                    Log.i(TAG, "onLongClick: " + alarm.getId());
 
                 }
             });
@@ -243,6 +241,9 @@ public class AlarmListFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i(TAG, "onActivitygolf: " + requestCode);
+        Log.i(TAG, "onActivitygolf: " + resultCode);
+        Log.i(TAG, "onActivitygolf: " + data);
         super.onActivityResult(requestCode, resultCode, data);
         Log.i(TAG, "onActivityResult1: " + REQUEST_TIME);
         if (requestCode == REQUEST_TIME) {
@@ -250,8 +251,6 @@ public class AlarmListFragment extends Fragment {
             if (resultCode == Activity.RESULT_OK) {
                 UpdateUI();
                 Log.i(TAG, "onActivityResult111: " + _adapter);
-            }else{
-                UpdateUI();
             }
         }
     }

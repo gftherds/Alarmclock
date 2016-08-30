@@ -33,17 +33,12 @@ import java.util.UUID;
 public class TimeDialog extends DialogFragment implements DialogInterface.OnClickListener {
     private static final String TAG = "TimeDialog1";
 
-
-    private static final int REQUEST_CODE = 200;
-
-
-
     EditText textView;
     TimePicker timePicker;
     Switch aSwitch;
     AlarmLab mAlarmLab;
     Alarm mAlarm;
-    Date date;
+
     UUID uuid;
 
     public static TimeDialog newInstance(UUID uuid) {
@@ -108,6 +103,8 @@ public class TimeDialog extends DialogFragment implements DialogInterface.OnClic
     @Override
     public void onClick(DialogInterface dialog, int which) {
         mAlarm = new Alarm();
+
+        Log.i(TAG, "add item : " + mAlarm);
         Intent intent = new Intent();
         Calendar calendar = Calendar.getInstance();
         int hour = 0;
@@ -119,13 +116,11 @@ public class TimeDialog extends DialogFragment implements DialogInterface.OnClic
         calendar.set(Calendar.HOUR, hour);
         calendar.set(Calendar.MINUTE, minute);
 
-
         mAlarm.setTitle(textView.getText().toString());
-
-
-
         mAlarm.setAlarmDate(calendar.getTime());
         mAlarm.setSolve(true);
+        mAlarmLab.addAlarm(mAlarm);
+
 
 
 
@@ -134,16 +129,17 @@ public class TimeDialog extends DialogFragment implements DialogInterface.OnClic
 
         Log.i(TAG, "Check true/false " + mAlarm.getId() + "tf -> " + mAlarm.isSolve());
 
-        mAlarmLab.addAlarm(mAlarm);
+
+
+
+
+
+
         Log.i(TAG, "onClick: " + mAlarm);
 
 
 
-        getTargetFragment().onActivityResult(REQUEST_CODE, Activity.RESULT_OK, intent);
-
-
-
-
+        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
 
     }
 }
