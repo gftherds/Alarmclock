@@ -102,9 +102,8 @@ public class TimeDialog extends DialogFragment implements DialogInterface.OnClic
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
-        mAlarm = new Alarm();
-
-        Log.i(TAG, "add item : " + mAlarm);
+//        mAlarm = new Alarm();
+            Log.i(TAG, "add item : " + mAlarm);
         Intent intent = new Intent();
         Calendar calendar = Calendar.getInstance();
         int hour = 0;
@@ -119,8 +118,7 @@ public class TimeDialog extends DialogFragment implements DialogInterface.OnClic
         mAlarm.setTitle(textView.getText().toString());
         mAlarm.setAlarmDate(calendar.getTime());
         mAlarm.setSolve(true);
-        mAlarmLab.addAlarm(mAlarm);
-
+//        mAlarmLab.addAlarm(mAlarm);
 
 
 

@@ -40,6 +40,7 @@ public class AlarmListFragment extends Fragment {
 
 
     private Alarm alarm;
+    private AlarmLab alarmLab;
 
 
     private Adapter _adapter;
@@ -72,16 +73,17 @@ public class AlarmListFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.mnu_add_item:
 
+                alarm = new Alarm();
+                AlarmLab.getInstance(getActivity()).addAlarm(alarm);
                 FragmentManager fragmentManager = getFragmentManager();
-                if (alarm == null) {
-                    alarm = new Alarm();
-                }
 
+                Log.i(TAG, "onOptionsItemSelected01: " + alarm);
                 TimeDialog timeDialog = TimeDialog.newInstance(alarm.getId());
                 timeDialog.setTargetFragment(AlarmListFragment.this, REQUEST_TIME);
                 timeDialog.show(fragmentManager, DIALOG_TIME);
 
-                UpdateUI();
+          //      UpdateUI();
+
 
                 Log.i(TAG, "hello" + alarm.getAlarmDate());
 
@@ -134,6 +136,7 @@ public class AlarmListFragment extends Fragment {
         @Override
         public void onBindViewHolder(Holder holder, int position) {
             Alarm alarm = _alarms.get(position);
+
             Log.i(TAG, "onBindViewHolder: " + _alarms);
             holder.bind(alarm, position);
         }
@@ -176,12 +179,15 @@ public class AlarmListFragment extends Fragment {
         public void bind(Alarm alarm, int position) {
             _alarm = alarm;
             _position = position;
-            timeTextView.setText(setFormatTime(_alarm.getAlarmDate()));
-            nameTextView.setText(_alarm.getTitle());
-            Log.i(TAG, "bind: " + nameTextView.getText().toString());
-            aSwitch.setChecked(_alarm.isSolve());
-            Log.i(TAG, "bind: " + _alarm.isSolve());
-            aSwitch.setOnClickListener(this);
+
+                timeTextView.setText(setFormatTime(_alarm.getAlarmDate()));
+                nameTextView.setText(_alarm.getTitle());
+                Log.i(TAG, "bind: " + nameTextView.getText().toString());
+                aSwitch.setChecked(_alarm.isSolve());
+                Log.i(TAG, "bind: " + _alarm.isSolve());
+
+                aSwitch.setOnClickListener(this);
+
         }
 
 
